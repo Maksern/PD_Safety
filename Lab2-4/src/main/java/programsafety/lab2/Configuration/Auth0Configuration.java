@@ -31,9 +31,11 @@ public class Auth0Configuration {
         return http
                 .authorizeHttpRequests(httpRequests -> {
                     httpRequests.requestMatchers("/").permitAll();
-                    httpRequests.anyRequest().authenticated();
+//                    httpRequests.anyRequest().authenticated();
+                    httpRequests.anyRequest().permitAll();
                 })
-                .oauth2Login(withDefaults())
+//                .oauth2Login(withDefaults())
+//                .formLogin(withDefaults())
                 .logout(logout -> logout
                         .addLogoutHandler(logoutHandler()))
                 .build();
