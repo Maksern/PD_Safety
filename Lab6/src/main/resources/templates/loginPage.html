@@ -32,16 +32,19 @@
 						Member Login
 					</span>
 
-					<div class="container-login100-form-btn">
-						<button class="login100-form-btn">Log In</button>
+					<div class="container-login100-form-btn" sec:authorize="!isAuthenticated()">
+						<button class="login100-form-btn">
+							<a th:href="@{/oauth2/authorization/okta}">Log In By Auth0</a>
+						</button>
 					</div>
 
-					<div class="text-center p-t-136">
-						<a class="txt2" th:href="@{/signupPage}">
-							Create your Account
-							<i class="fa fa-long-arrow-right m-l-5" aria-hidden="true"></i>
-						</a>
+					<div sec:authorize="isAuthenticated()">
+						<p>You are logged in!</p>
+						<form name="logoutForm" th:href="@{/logout}">
+							<button class="logout100-form-btn" type="submit" value="Log out">Log Out</button>
+						</form>
 					</div>
+
 				</form>
 			</div>
 		</div>

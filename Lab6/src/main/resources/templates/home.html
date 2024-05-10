@@ -1,32 +1,19 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity6">
 <head>
     <meta charset="UTF-8">
     <title>Home</title>
 </head>
 <body>
-    Welcome, Home
+    <h3>Welcome Home</h3>
 
-    <div th:unless="${username}">
-        <a href="/loginPage">Login</a>
+    <div sec:authorize="isAuthenticated()">
+        <h5>Hello, <span th:text="${username}"></span></h5>
+        <p>You are logged in!</p>
+        <form name="logoutForm" th:href="@{/logout}">
+            <button class="logout100-form-btn" type="submit" value="Log out">Log Out</button>
+        </form>
     </div>
-
-    <div th:if="${error}">
-        <p th:text="${error}"></p>
-    </div>
-
-
-    <div th:if="${username}">
-        <a href="/logout">Logout</a>
-        <h1>Hello, <span th:text="${username}"></span></h1>
-
-        <p th:text="${header}"></p>
-        <p th:text="${payload}"></p>
-
-        <a href="/updateToken">Update Token</a><br>
-        <a href="/validateToken?addToToken=">Validate Token</a><br>
-    </div>
-
 
 </body>
 </html>
