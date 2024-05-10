@@ -3,17 +3,21 @@
 <head>
     <meta charset="UTF-8">
     <title>Home</title>
+    <link rel="stylesheet" th:href="@{/css/styles.css}">
 </head>
 <body>
-    <h3>Welcome Home</h3>
+    <div class="container">
+        <h3>Welcome Home</h3>
 
-    <div sec:authorize="isAuthenticated()">
-        <h5>Hello, <span th:text="${username}"></span></h5>
-        <p>You are logged in!</p>
-        <form name="logoutForm" th:href="@{/logout}">
-            <button class="logout100-form-btn" type="submit" value="Log out">Log Out</button>
-        </form>
+        <div sec:authorize="!isAuthenticated()">
+            <a th:href="@{/loginPage}">Log In</a>
+        </div>
+
+        <div sec:authorize="isAuthenticated()">
+            <h5>Hello, <span th:text="${username}"></span></h5>
+            <p>You are logged in!</p>
+            <a th:href="@{/logout}">Log Out</a>
+        </div>
     </div>
-
 </body>
 </html>

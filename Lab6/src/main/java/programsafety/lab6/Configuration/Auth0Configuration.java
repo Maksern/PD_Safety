@@ -28,7 +28,8 @@ public class Auth0Configuration {
         return http
                 .authorizeHttpRequests(httpRequests -> {
                     httpRequests.requestMatchers("/home").permitAll();
-                    httpRequests.anyRequest().authenticated();
+                    httpRequests.requestMatchers("/secure").authenticated();
+                    httpRequests.anyRequest().permitAll();
                 })
                 .oauth2Login(withDefaults())
                 .logout(logout -> logout
@@ -36,17 +37,16 @@ public class Auth0Configuration {
                 .build();
     }
 
-
-
     private LogoutHandler logoutHandler() {
         return ((request, response, authentication) -> {
             try {
-                String baseUrl = ServletUriComponentsBuilder.fromCurrentContextPath().build().toUriString();
-                response.sendRedirect(issuer + "v2/logout?client_id=" + clientId + "&returnTo=" + baseUrl);
+                String baseUrl = ServletUriComponentsBuilder
+                        .fromCurrentContextPath().build().toUriString();
+                response.sendRedirect(issuer + "v2/logout?client_id="
+                                    + clientId + "&returnTo=" + baseUrl);
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
         });
     }
-
 }

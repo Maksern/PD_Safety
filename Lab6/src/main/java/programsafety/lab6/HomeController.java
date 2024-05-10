@@ -6,23 +6,26 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.RestController;
 
-import java.security.Principal;
 
 @Controller
 public class HomeController {
+
     @GetMapping("/*")
+    public String redirectHome() {
+        return "redirect:/home";
+    }
+    @GetMapping("/home")
     public String home(@AuthenticationPrincipal OAuth2User principal, Model model) {
-        String username = getUserName(principal);
-        model.addAttribute("username", username);
+        if (principal != null) {
+            String username = getUserName(principal);
+            model.addAttribute("username", username);
+        }
+
         return "home";
     }
-
-    @GetMapping("/login")
-    public String login(@AuthenticationPrincipal OAuth2User principal, Model model) {
-        String username = getUserName(principal);
-        model.addAttribute("username", username);
+    @GetMapping("/loginPage")
+    public String login() {
         return "loginPage";
     }
 
@@ -32,6 +35,8 @@ public class HomeController {
         String username = getUserName(principal);
         return username.substring(0, 1).toUpperCase() + username.substring(1) + ", welcome in Sixth Departure";
     }
+
+
 
     private String getUserName(OAuth2User principal) {
         String[] types = {"login", "nickname", "given_name", "name"};
