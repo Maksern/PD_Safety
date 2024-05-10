@@ -2,19 +2,22 @@ package programsafety.lab6;
 
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.core.user.OAuth2User;
+import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.security.Principal;
 
-@RestController
+@Controller
 public class HomeController {
     @GetMapping
     public String home() {
-        return "Welcome, Home";
+        return "home";
     }
 
     @GetMapping("/secure")
+    @ResponseBody
     public String sixthDeparture(@AuthenticationPrincipal OAuth2User principal) {
        String username = principal.getAttribute("login");
         if (username == null) {
