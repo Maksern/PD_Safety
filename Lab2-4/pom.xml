@@ -46,6 +46,7 @@
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
         </dependency>
+
         <dependency>
             <groupId>com.auth0</groupId>
             <artifactId>java-jwt</artifactId>
@@ -56,6 +57,7 @@
             <artifactId>jwks-rsa</artifactId>
             <version>0.9.0</version>
         </dependency>
+
     </dependencies>
 
     <build>

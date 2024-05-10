@@ -110,16 +110,24 @@ public class AuthController {
     @GetMapping("/validateToken")
     @ResponseBody
     public String validateToken(@RequestParam(defaultValue = "") String addToToken ) throws JwkException {
-        DecodedJWT jwt = JWT.decode(session.get("access_token") + addToToken);
+        String codeJwt = session.get("access_token") + addToToken;
+        DecodedJWT jwt = JWT.decode(codeJwt);
         JwkProvider jwkProvider = new UrlJwkProvider("https://dev-l5yejihpj316wdj1.us.auth0.com/");
         Jwk jwk = jwkProvider.get(jwt.getKeyId());
         Algorithm algorithm = Algorithm.RSA256((RSAPublicKey) jwk.getPublicKey(), null);
 
+        String answer = "Checking <br>";
+        int length = codeJwt.length();
+
+        for (int i = 0; i < length; i += 60) {
+            answer += codeJwt.substring(i, Math.min(length, i + 60)) + "<br>";
+        }
         try {
             algorithm.verify(jwt);
-            return "Token is valid";
+            return answer + "Token is valid";
         } catch (Exception exception) {
-            return "Token is invalid";
+            return answer + "Token is invalid";
         }
     }
 }
+

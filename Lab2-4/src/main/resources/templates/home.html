@@ -3,30 +3,26 @@
 <head>
     <meta charset="UTF-8">
     <title>Home</title>
+    <link rel="stylesheet" th:href="@{/css/home.css}">
 </head>
 <body>
-    Welcome, Home
+<div class="container">
+    <h3>Welcome, Home</h3>
 
     <div th:unless="${username}">
         <a href="/loginPage">Login</a>
     </div>
 
-    <div th:if="${error}">
-        <p th:text="${error}"></p>
-    </div>
-
-
     <div th:if="${username}">
-        <a href="/logout">Logout</a>
-        <h1>Hello, <span th:text="${username}"></span></h1>
+        <h4>Hello, <span th:text="${username}"></span></h4>
 
         <p th:text="${header}"></p>
         <p th:text="${payload}"></p>
 
+        <a href="/logout">Logout</a>
         <a href="/updateToken">Update Token</a><br>
         <a href="/validateToken?addToToken=">Validate Token</a><br>
     </div>
-
-
+</div>
 </body>
 </html>

@@ -26,10 +26,13 @@ public class AuthService {
                 "client_id=%s&" +
                 "client_secret=%s&" +
                 "audience=%s", username, pass,
-                env.getProperty("okta.oauth2.client-id"), env.getProperty("okta.oauth2.client-secret"), env.getProperty("okta.oauth2.audience"));
+                env.getProperty("okta.oauth2.client-id"),
+                env.getProperty("okta.oauth2.client-secret"),
+                env.getProperty("okta.oauth2.audience"));
 
         try {
-            HttpResponse<JsonNode> response = Unirest.post("https://dev-l5yejihpj316wdj1.us.auth0.com/oauth/token")
+            HttpResponse<JsonNode> response =
+                    Unirest.post("https://dev-l5yejihpj316wdj1.us.auth0.com/oauth/token")
                     .header("content-type", "application/x-www-form-urlencoded")
                     .body(body)
                     .asJson();
@@ -48,7 +51,8 @@ public class AuthService {
                         username, pass, username.split("@")[0]);
         System.out.println(body);
         try {
-            HttpResponse<JsonNode> response = Unirest.post("https://dev-l5yejihpj316wdj1.us.auth0.com/api/v2/users")
+            HttpResponse<JsonNode> response =
+                    Unirest.post("https://dev-l5yejihpj316wdj1.us.auth0.com/api/v2/users")
                     .header("content-type", "application/x-www-form-urlencoded")
                     .header("Authorization", String.format("Bearer %s", access_token))
                     .body(body)
@@ -60,6 +64,8 @@ public class AuthService {
             throw new RuntimeException(e);
         }
     }
+
+
 
     private String getAppAccessToken() {
         String body = String.format("grant_type=client_credentials&" +
@@ -86,10 +92,13 @@ public class AuthService {
                         "refresh_token=%s&" +
                         "client_id=%s&" +
                         "client_secret=%s&",
-                refresh_token,  env.getProperty("okta.oauth2.client-id"), env.getProperty("okta.oauth2.client-secret"));
+                refresh_token,
+                env.getProperty("okta.oauth2.client-id"),
+                env.getProperty("okta.oauth2.client-secret"));
 
         try {
-            HttpResponse<JsonNode> response = Unirest.post("https://dev-l5yejihpj316wdj1.us.auth0.com/oauth/token")
+            HttpResponse<JsonNode> response =
+                    Unirest.post("https://dev-l5yejihpj316wdj1.us.auth0.com/oauth/token")
                     .header("content-type", "application/x-www-form-urlencoded")
                     .body(body)
                     .asJson();
