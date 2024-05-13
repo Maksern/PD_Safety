@@ -5,8 +5,7 @@ import com.mashape.unirest.http.JsonNode;
 import com.mashape.unirest.http.Unirest;
 import com.mashape.unirest.http.exceptions.UnirestException;
 import lombok.AllArgsConstructor;
-import org.apache.tomcat.util.json.JSONParser;
-import org.json.JSONObject;
+import org.springframework.boot.json.JsonParserFactory;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
 
@@ -33,14 +32,10 @@ public class AuthService {
                 env.getProperty("okta.oauth2.audience"));
 
         try {
-            HttpResponse<JsonNode> response =
-                    Unirest.post("https://dev-l5yejihpj316wdj1.us.auth0.com/oauth/token")
+            return Unirest.post("https://dev-l5yejihpj316wdj1.us.auth0.com/oauth/token")
                     .header("content-type", "application/x-www-form-urlencoded")
                     .body(body)
                     .asJson();
-
-            return response;
-
         } catch (UnirestException e) {
             throw new RuntimeException(e);
         }
@@ -53,15 +48,11 @@ public class AuthService {
                         username, pass, username.split("@")[0]);
         System.out.println(body);
         try {
-            HttpResponse<JsonNode> response =
-                    Unirest.post("https://dev-l5yejihpj316wdj1.us.auth0.com/api/v2/users")
+            return Unirest.post("https://dev-l5yejihpj316wdj1.us.auth0.com/api/v2/users")
                     .header("content-type", "application/x-www-form-urlencoded")
                     .header("Authorization", String.format("Bearer %s", access_token))
                     .body(body)
                     .asJson();
-
-            return response;
-
         } catch (UnirestException e) {
             throw new RuntimeException(e);
         }
@@ -77,13 +68,11 @@ public class AuthService {
                 env.getProperty("okta.oauth2.client-id"), env.getProperty("okta.oauth2.client-secret"), env.getProperty("okta.oauth2.audience"));
 
         try {
-            HttpResponse<JsonNode> response = Unirest.post("https://dev-l5yejihpj316wdj1.us.auth0.com/oauth/token")
+            return Unirest.post("https://dev-l5yejihpj316wdj1.us.auth0.com/oauth/token")
                     .header("content-type", "application/x-www-form-urlencoded")
                     .body(body)
-                    .asJson();
-
-            return response.getBody().getObject().get("access_token").toString();
-
+                    .asJson()
+                    .getBody().getObject().get("access_token").toString();
         } catch (UnirestException e) {
             throw new RuntimeException(e);
         }
@@ -99,14 +88,10 @@ public class AuthService {
                 env.getProperty("okta.oauth2.client-secret"));
 
         try {
-            HttpResponse<JsonNode> response =
-                    Unirest.post("https://dev-l5yejihpj316wdj1.us.auth0.com/oauth/token")
+            return Unirest.post("https://dev-l5yejihpj316wdj1.us.auth0.com/oauth/token")
                     .header("content-type", "application/x-www-form-urlencoded")
                     .body(body)
                     .asJson();
-
-            return response;
-
         } catch (UnirestException e) {
             throw new RuntimeException(e);
         }
@@ -138,7 +123,10 @@ public class AuthService {
         String codePayload = jwt.split("\\.")[1];
         Base64.Decoder decoder = Base64.getUrlDecoder();
         String decodePayload = new String(decoder.decode(codePayload));
-//        session.put("expirationTime", decodePayload.get("exp"));
+
+        Map payload = JsonParserFactory.getJsonParser().parseMap(decodePayload);
+        session.put("expirationTime", payload.get("exp").toString());
+
         return decodePayload;
     }
 }

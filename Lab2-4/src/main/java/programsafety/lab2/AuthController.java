@@ -16,12 +16,13 @@ import org.springframework.web.bind.annotation.*;
 import java.security.interfaces.RSAPublicKey;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 
 @Controller
 public class AuthController {
     public Map<String, String> session;
-    private AuthService authService;
+    private final AuthService authService;
 
     public AuthController(AuthService authService) {
         this.session = new HashMap<>();
@@ -30,12 +31,17 @@ public class AuthController {
 
     @GetMapping("/*")
     public String home(Model model) {
-        System.out.println(session.get("expirationTime"));
-        System.out.println(System.currentTimeMillis());
         if(session.get("username") != null){
             model.addAttribute("username", session.get("username"));
             model.addAttribute("header", session.get("header"));
             model.addAttribute("payload", session.get("payload"));
+
+            Long timeExp = Long.valueOf(session.get("expirationTime"));
+            Long currentTime =  TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis());
+
+            if((timeExp - currentTime) < 10){
+                return "redirect:/updateToken";
+            }
         }
         return "home";
     }
@@ -101,7 +107,7 @@ public class AuthController {
             String access_token = (String) response.getBody().getObject().get("access_token");
             authService.updateAccessTokenInSession(session, access_token);
         } else {
-            session.put("error", response.getBody().getObject().get("error_description").toString());
+            session.put("message", response.getBody().getObject().get("error_description").toString());
         }
 
         return "redirect:/home";
@@ -116,11 +122,11 @@ public class AuthController {
         Jwk jwk = jwkProvider.get(jwt.getKeyId());
         Algorithm algorithm = Algorithm.RSA256((RSAPublicKey) jwk.getPublicKey(), null);
 
-        String answer = "Checking <br>";
+        StringBuilder answer = new StringBuilder("Checking <br>");
         int length = codeJwt.length();
 
         for (int i = 0; i < length; i += 60) {
-            answer += codeJwt.substring(i, Math.min(length, i + 60)) + "<br>";
+            answer.append(codeJwt, i, Math.min(length, i + 60)).append("<br>");
         }
         try {
             algorithm.verify(jwt);
