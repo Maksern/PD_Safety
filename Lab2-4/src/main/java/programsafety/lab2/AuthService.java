@@ -5,6 +5,8 @@ import com.mashape.unirest.http.JsonNode;
 import com.mashape.unirest.http.Unirest;
 import com.mashape.unirest.http.exceptions.UnirestException;
 import lombok.AllArgsConstructor;
+import org.apache.tomcat.util.json.JSONParser;
+import org.json.JSONObject;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
 
@@ -113,31 +115,30 @@ public class AuthService {
     public void addParamsToSession(Map session, String access_token, String refresh_token, String username) {
         session.put("access_token", access_token);
         session.put("header", getHeaderFromJWT(access_token));
-        session.put("payload", getPayloadFromJWT(access_token));
+        session.put("payload", getPayloadFromJWT(access_token, session));
         session.put("refresh_token", refresh_token);
         session.put("username", username);
-        session.put("error", "");
+        session.put("message", "");
     }
 
-    public void updateAccesTokenInSession(Map session, String access_token) {
+    public void updateAccessTokenInSession(Map session, String access_token) {
         session.put("access_token", access_token);
         session.put("header", getHeaderFromJWT(access_token));
-        session.put("payload", getPayloadFromJWT(access_token));
+        session.put("payload", getPayloadFromJWT(access_token, session));
     }
 
     public String getHeaderFromJWT(String jwt) {
         String codeHeader = jwt.split("\\.")[0];
         Base64.Decoder decoder = Base64.getUrlDecoder();
         String decodeHeader = new String(decoder.decode(codeHeader));
-
         return decodeHeader;
     }
 
-    public String getPayloadFromJWT(String jwt) {
+    public String getPayloadFromJWT(String jwt, Map session) {
         String codePayload = jwt.split("\\.")[1];
         Base64.Decoder decoder = Base64.getUrlDecoder();
         String decodePayload = new String(decoder.decode(codePayload));
-
+//        session.put("expirationTime", decodePayload.get("exp"));
         return decodePayload;
     }
 }

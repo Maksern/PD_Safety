@@ -6,9 +6,7 @@ import com.auth0.jwk.JwkProvider;
 import com.auth0.jwk.UrlJwkProvider;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
-import com.auth0.jwt.exceptions.SignatureVerificationException;
 import com.auth0.jwt.interfaces.DecodedJWT;
-import com.auth0.jwt.interfaces.RSAKeyProvider;
 import com.mashape.unirest.http.HttpResponse;
 import com.mashape.unirest.http.JsonNode;
 import org.springframework.stereotype.Controller;
@@ -32,6 +30,8 @@ public class AuthController {
 
     @GetMapping("/*")
     public String home(Model model) {
+        System.out.println(session.get("expirationTime"));
+        System.out.println(System.currentTimeMillis());
         if(session.get("username") != null){
             model.addAttribute("username", session.get("username"));
             model.addAttribute("header", session.get("header"));
@@ -99,7 +99,7 @@ public class AuthController {
 
         if (response.getStatus() == 200) {
             String access_token = (String) response.getBody().getObject().get("access_token");
-            authService.updateAccesTokenInSession(session, access_token);
+            authService.updateAccessTokenInSession(session, access_token);
         } else {
             session.put("error", response.getBody().getObject().get("error_description").toString());
         }
